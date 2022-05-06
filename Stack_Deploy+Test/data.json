@@ -1,0 +1,104 @@
+{
+	"tablename1": [
+		{
+            "PutRequest": {
+                "Item": {
+					"Price": {"N": "1982"},
+					"Album": {"S": "Thriller"},
+					"Artist": {"S": "Michael Jackson"},
+					"id": {"N": "1001"}
+                }	
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+					"Price": {"N": "2010"},
+					"Album": {"S": "Teenage Dream"},
+					"Artist": {"S": "Katy Perry"},
+					"id": {"N": "1002"}
+				}
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+					"Price": {"N": "1991"},
+					"Album": {"S": "Nevermind"},
+					"Artist": {"S": "Nirvana"},
+					"id": {"N": "1003"}
+				}
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+					"Price": {"N": "2017"},
+					"Album": {"S": "D.A.M.N"},
+					"Artist": {"S": "Kendrick Lamar"},
+					"id": {"N": "1004"}
+				}
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+					"Price": {"N": "1968"},
+					"Album": {"S": "White Album"},
+					"Artist": {"S": "The Beatles"},
+					"id": {"N": "1005"}
+				}
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+					"Price": {"N": "1991"},
+					"Album": {"S": "Ten"},
+					"Artist": {"S": "Pearl Jam"},
+					"id": {"N": "1006"}
+				}
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+					"Price": {"N": "1984"},
+					"Album": {"S": "Legend"},
+					"Artist": {"S": "Bob Marley"},
+					"id": {"N": "1007"}
+				}
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+					"Price": {"N": "2000"},
+					"Album": {"S": "Parachutes"},
+					"Artist": {"S": "Coldplay"},
+					"id": {"N": "1008"}
+				}
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+					"Price": {"N": "1977"},
+					"Album": {"S": "Rumors"},
+					"Artist": {"S": "Fleetwood Mac"},
+					"id": {"N": "1009"}
+				}
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+					"Price": {"N": "2010"},
+					"Album": {"S": "Thank Me Later"},
+					"Artist": {"S": "Drake"},
+					"id": {"N": "1010"}
+				}
+            }
+        }
+	]
+}

@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  Destination_Bucket:
+    Type:   "AWS::S3::Bucket"
+    Properties:
+        BucketName: "Dest_Bucket0101"
+
+#to execute batch upload,  query and s3 upload
+  Lambda_Query:
+    Type: "AWS::Lambda::Function"
+    Properties:
+        Runtime: python3.7
+        Role: arn:aws:iam::143865003029:role/Stack_Lambda_Role
+        Code: Lambda_DB_Query
+        Handler: Lambda_DB_Query.lambda_handler
+        
+
+  Table:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+        AttributeDefinitions:
+            -
+                AttributeName: "Id"
+                AttributeType: "N"
+            -
+                AttributeName:  "Artist"
+                AttributeType:  "S"
+            -
+                AttributeName:  "Album"
+                AttributeType:  "S"
+            -    
+                AttributeName:  "Released"
+                AttributeType:  "N"
+            -
+        KeySchema:
+            -
+                AttributeName:  "Id"
+                KeyType:    "HASH"
+            -
+        ProvisionedThroughput:
+            ReadCapacityUnits: "12"
+            WriteCapacityUnits: "12"
+        TableName:  "musicinfo"
+        GlobalSecondaryIndexes:
+            -
+                IndexName:  "YearRealeasedIndex"
+                KeySchema:
+                    -
+                        AttributeName: "Released"
+                        KeyType: "RANGE"
+                    -
+                Projection:
+                    ProjectionType: "ALL"
+                ProvisionedThroughput: 
+                    ReadCapacityUnits: "5"
+                    WriteCapacityUnits: "5"
+            -
+Outputs:
+    FunctionName:
+        Value: Lambda_Query
