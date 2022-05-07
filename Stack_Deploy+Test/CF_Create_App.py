@@ -6,12 +6,12 @@ import random
 
 #Determine whether to begin new stack configuration/test or invoke a test for an existing stack app
 def User_Commands():
-    usercommand0 = input('Commands: new config, use config')
-    if usercommand0 == 'use existing':
+    usercommand0 = input('Commands: new config, use config :')
+    if usercommand0 == 'use config':
         data = input('Enter 4 digit existing test id: ')
         result = {'id0': data, 'comm': usercommand0}
-    elif usercommand0 == 'new test':
-        data = random.randint(1000, 9999) 
+    elif usercommand0 == 'new config':
+        data = json.dumps(random.randint(1000, 9999))
         result = {'id0': data, 'comm': usercommand0}
     else:
         print('Invalid command')
@@ -30,6 +30,7 @@ def Launch_Source_Bucket(input_data):
         )
         if 'Location' in response:
             data = response['Location'][response['Location'].index('/') + 1:]
+            print('Source bucket for stack resources has been created: '+ 'Event_Resource'+ id0)
         else:
             print('Source bucket failed to create')
         return data
@@ -42,11 +43,11 @@ def Launch_Source_Bucket(input_data):
 
 #Upload required testing and configuration resources
 def Upload_Test_Resources(input_data):
-    with open('mytestapps/CF_Deploy+Test/template.yaml') as object1:
+    with open('CF_Deploy+Test/template.yaml') as object1:
         template1 = object1.read()
-    with open('mytestapps/CF_Deploy+Test/data.json') as object2:
+    with open('CF_Deploy+Test/data.json') as object2:
         items = object2.read() 
-    with open('mytestapps/CF_Deploy+Test/Test_Event.py') as object3:
+    with open('CF_Deploy+Test/Test_Event.py') as object3:
         function = object3.read()         
     id0 = input_data['id0']
     try:
