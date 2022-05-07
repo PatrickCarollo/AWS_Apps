@@ -11,7 +11,7 @@ def User_Commands():
         data = input('Enter 4 digit existing test id: ')
         result = {'id0': data, 'comm': usercommand0}
     elif usercommand0 == 'new config':
-        data = json.dumps(random.randint(1000, 9999))
+        data = json.dumps(random.randint(10000, 99999))
         result = {'id0': data, 'comm': usercommand0}
     else:
         print('Invalid command')
@@ -30,7 +30,7 @@ def Launch_Source_Bucket(input_data):
         )
         if 'Location' in response:
             data = response['Location'][response['Location'].index('/') + 1:]
-            print('Source bucket for stack resources has been created: '+ 'Event_Resource'+ id0)
+            print('Source bucket for stack resources has been created: '+ data)
         else:
             print('Source bucket failed to create')
         return data
@@ -42,27 +42,27 @@ def Launch_Source_Bucket(input_data):
 
 
 #Upload required testing and configuration resources
-def Upload_Test_Resources(input_data):
-    with open('CF_Deploy+Test/template.yaml') as object1:
+def Upload_Test_Resources(input_data, bucket_name):
+    with open('Stack_Deploy+Test/template.yaml') as object1:
         template1 = object1.read()
-    with open('CF_Deploy+Test/data.json') as object2:
+    with open('Stack_Deploy+Test/data.json') as object2:
         items = object2.read() 
-    with open('CF_Deploy+Test/Test_Event.py') as object3:
+    with open('Stack_Deploy+Test/Test_Event.py') as object3:
         function = object3.read()         
     id0 = input_data['id0']
     try:
         response1 = s3client.put_object(
-            Bucket = 'Event_Resource'+ id0,
+            Bucket = bucket_name,
             Body = template1 ,
             Key = 'Template' + id0 + '.yaml'
         )
         response2 = s3client.put_object(
-            Bucket = 'Event_Resource'+ id0,
+            Bucket = bucket_name,
             Body = items,
             Key = 'albums' + id0 + '.json'
         )
         response3 = s3client.put_object(
-            Bucket = 'Event_Resource'+ id0,
+            Bucket = bucket_name,
             Body = function,
             Key = 'Test_Event' + id0 + '.py'
         )
@@ -74,7 +74,7 @@ def Upload_Test_Resources(input_data):
 
 #Uses code that was uploaded to resource bucket
 lambdaclient = boto3.client('lambda')
-def Create_Event_Function(input_data, bucket):
+def Create_Event_Function(input_data, bucket_name):
     id0 = input_data['id0']
     try:
         lambdaclient.create_function(
@@ -83,7 +83,7 @@ def Create_Event_Function(input_data, bucket):
             Role = 'arn:aws:iam::143865003029:role/Test_Event_lambda',
             Handler = 'Test_Event.lambda_handler',
             Code = {
-                'S3Bucket': bucket,
+                'S3Bucket': bucket_name,
                 'S3Key': 'Test_Event' + id0 + '.py'
             }
         )
@@ -164,7 +164,7 @@ def main():
     
     if a['comm'] == 'new config':
         y = Launch_Source_Bucket(a)
-        Upload_Test_Resources(a)
+        Upload_Test_Resources(a, y)
         Create_Event_Function(a, y)
         CF_Create(a)
     else:

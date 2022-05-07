@@ -37,7 +37,7 @@ def query_item(table_name):
             Select = 'ALL_ATTRIBUTES' ,
             KeyConditionExpression =   'Released <= :x' ,
             ExpressionAttributeValues = {
-                ':x' : {'N' : '2000' }
+                ':x' : {'N' : '1999' }
             }    
         )
         if 'Items' in response1:
