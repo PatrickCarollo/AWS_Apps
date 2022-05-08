@@ -8,7 +8,7 @@ import random
 def User_Commands():
     usercommand0 = input('Commands: new config, use config :')
     if usercommand0 == 'use config':
-        data = input('Enter 4 digit existing test id: ')
+        data = input('Enter 6 digit existing test id: ')
         result = {'id0': data, 'comm': usercommand0}
     elif usercommand0 == 'new config':
         data = json.dumps(random.randint(100000, 999999))
@@ -24,7 +24,6 @@ s3client = boto3.client('s3')
 def Launch_Source_Bucket(input_data):
     id0 = input_data['id0']
     bktname = 'event-resource'+ id0
-    print(type(bktname))
     try:
         response = s3client.create_bucket(
         Bucket = bktname
@@ -67,6 +66,9 @@ def Upload_Test_Resources(input_data, bucket_name):
             Body = function,
             Key = 'Test_Event' + id0 + '.py'
         )
+
+
+
     #API fail
     except ClientError as e:
         print("Client error: %s" % e)
@@ -82,7 +84,7 @@ def Create_Event_Function(input_data, bucket_name):
             FunctionName = 'Lambda_Test_Event' + id0,
             Runtime = 'python3.7', 
             Role = 'arn:aws:iam::143865003029:role/Test_Event_lambda',
-            Handler = 'Test_Event.lambda_handler',
+            Handler = 'Test_Event' + id0 + '.lambda_handler',
             Code = {
                 'S3Bucket': bucket_name,
                 'S3Key': 'Test_Event' + id0 + '.py'
@@ -99,7 +101,7 @@ cfclient = boto3.client('cloudformation')
 def CF_Create(input_data):
     id0 = input_data['id0']
     name = 'Main_Stack'+ id0
-    templatelocation = 'https://Event_Resource{}.s3.amazonaws.com/Template{}.yaml'.format(id0, id0)
+    templatelocation = 'https://event-resource{}.s3.amazonaws.com/Template{}.yaml'.format(id0, id0)
     try:
         response = cfclient.create_stack(
             StackName = name,
