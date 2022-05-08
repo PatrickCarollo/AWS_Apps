@@ -3,7 +3,7 @@ Resources:
   Destination_Bucket:
     Type:   "AWS::S3::Bucket"
     Properties:
-        BucketName: "Dest_Bucket0101"
+        BucketName: "dest-bucket010101"
 
 #to execute batch upload,  query and s3 upload
   Lambda_Query:

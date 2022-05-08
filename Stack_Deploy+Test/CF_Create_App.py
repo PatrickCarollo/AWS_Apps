@@ -11,7 +11,7 @@ def User_Commands():
         data = input('Enter 4 digit existing test id: ')
         result = {'id0': data, 'comm': usercommand0}
     elif usercommand0 == 'new config':
-        data = json.dumps(random.randint(10000, 99999))
+        data = json.dumps(random.randint(100000, 999999))
         result = {'id0': data, 'comm': usercommand0}
     else:
         print('Invalid command')
@@ -23,10 +23,11 @@ def User_Commands():
 s3client = boto3.client('s3')
 def Launch_Source_Bucket(input_data):
     id0 = input_data['id0']
+    bktname = 'event-resource'+ id0
+    print(type(bktname))
     try:
         response = s3client.create_bucket(
-        Bucket = 'Event_Resource'+ id0,
-        ACL='private'
+        Bucket = bktname
         )
         if 'Location' in response:
             data = response['Location'][response['Location'].index('/') + 1:]
@@ -43,11 +44,11 @@ def Launch_Source_Bucket(input_data):
 
 #Upload required testing and configuration resources
 def Upload_Test_Resources(input_data, bucket_name):
-    with open('Stack_Deploy+Test/template.yaml') as object1:
+    with open('AWS_Apps/Stack_Deploy+Test/template.yaml') as object1:
         template1 = object1.read()
-    with open('Stack_Deploy+Test/data.json') as object2:
+    with open('AWS_Apps/Stack_Deploy+Test/data.json') as object2:
         items = object2.read() 
-    with open('Stack_Deploy+Test/Test_Event.py') as object3:
+    with open('AWS_Apps/Stack_Deploy+Test/Test_Event.py') as object3:
         function = object3.read()         
     id0 = input_data['id0']
     try:
