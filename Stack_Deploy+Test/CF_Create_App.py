@@ -163,7 +163,7 @@ def Cloudwatch_Log_Fetch(stack_function):
 
 
 
-#Optionally deletes deployed test buckets and functions to cleanup another deploy
+#Optionally deletes deployed test buckets and functions to cleanup before another deploy
 def Delete_Test(input_data):
     id0 = input_data['id0']
     cleanup = input('Cleanup test resources?: y/n')
