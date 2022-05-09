@@ -10,7 +10,7 @@ def lambda_handler(event, context):
 #getting .json to send to stack launched infrastructure 
     response0 = s3client.get_object(
         Bucket = 'Event_Resource'+ event,
-        Key = 'albums' + event + '.json'
+        Key = 'data' + event + '.json'
     )
     file = response0['Body'].read().decode('utf-8')
     global jsonitem

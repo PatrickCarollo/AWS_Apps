@@ -8,10 +8,10 @@ import random
 def User_Commands():
     usercommand0 = input('Commands: new config, use config :')
     if usercommand0 == 'use config':
-        data = input('Enter 6 digit existing test id: ')
+        data = input('Enter 4 digit existing test id: ')
         result = {'id0': data, 'comm': usercommand0}
     elif usercommand0 == 'new config':
-        data = json.dumps(random.randint(100000, 999999))
+        data = json.dumps(random.randint(1000, 9999))
         result = {'id0': data, 'comm': usercommand0}
     else:
         print('Invalid command')
@@ -34,7 +34,6 @@ def Launch_Source_Bucket(input_data):
         else:
             print('Source bucket failed to create')
         return data
-    
     #API fail
     except ClientError as e:
         print("Client error: %s" % e)
@@ -59,16 +58,15 @@ def Upload_Test_Resources(input_data, bucket_name):
         response2 = s3client.put_object(
             Bucket = bucket_name,
             Body = items,
-            Key = 'albums' + id0 + '.json'
+            Key = 'data' + id0 + '.json'
         )
         response3 = s3client.put_object(
             Bucket = bucket_name,
             Body = function,
             Key = 'Test_Event' + id0 + '.py'
         )
-
-
-
+        if 'ETag' in response3:
+            print('Resources uploaded to bucket '+ bucket_name + id0)
     #API fail
     except ClientError as e:
         print("Client error: %s" % e)
@@ -80,7 +78,7 @@ lambdaclient = boto3.client('lambda')
 def Create_Event_Function(input_data, bucket_name):
     id0 = input_data['id0']
     try:
-        lambdaclient.create_function(
+        response = lambdaclient.create_function(
             FunctionName = 'Lambda_Test_Event' + id0,
             Runtime = 'python3.7', 
             Role = 'arn:aws:iam::143865003029:role/Test_Event_lambda',
@@ -90,6 +88,8 @@ def Create_Event_Function(input_data, bucket_name):
                 'S3Key': 'Test_Event' + id0 + '.py'
             }
         )
+        if 'FunctionName' in response:
+            print('Test event succesfully created:' + response['FunctionName'] +', continuing to stack create..')
     #API fail 
     except ClientError as e:
         print("Client error: %s" % e)
@@ -162,9 +162,46 @@ def Cloudwatch_Log_Fetch(stack_function):
 
 
 
+#Optionally deletes deployed test buckets and functions to cleanup another deploy
+def Delete_Test(input_data):
+    id0 = input_data['id0']
+    cleanup = input('Cleanup test resources?: y/n')
+    if cleanup == 'y':
+        try:
+            response0 = s3client.delete_objects(
+                Bucket = 'event-resource' + id0 ,
+                Delete = [
+                    {
+                    'Key': 'Template' + id0 + '.yaml'
+                    },
+                    {
+                    'Key': 'data' + id0 + '.json'
+                    },
+                    {
+                    'Key': 'Test_Event' + id0 + '.py'
+                    }               
+                ]
+            )
+    
+            response1 = s3client.delete_bucket(
+                Bucket = 'event-resource' + id0 ,
+            )
+
+            response2 = lambdaclient.delete_function(
+                FunctionName= 'Lambda_Test_Event' + id0
+            )
+
+        except ClientError as e:
+            print("Client error: %s" % e)
+    elif cleanup == 'n':
+        print('Resource with id: '+ id0 + ' kept for future deployments')
+    else:
+        print('Invalid deletion command')
+        
+        
+
 def main():
     a = User_Commands()
-    
     if a['comm'] == 'new config':
         y = Launch_Source_Bucket(a)
         Upload_Test_Resources(a, y)
@@ -174,6 +211,6 @@ def main():
         pass
     z = Lambda_Event_Invoke(a)
     Cloudwatch_Log_Fetch(z)
-
+    Delete_Test(a)
 if __name__ == '__main__':
     main()
