@@ -109,6 +109,7 @@ def CF_Create(input_data):
         )
         if 'StackId' in response:
             data = response['StackId']
+            print('Stack created')
         else:
             data = False
         return data
