@@ -11,7 +11,7 @@ Resources:
     Properties:
         Runtime: python3.7
         Role: arn:aws:iam::143865003029:role/Stack_Lambda_Role
-        Code: Lambda_DB_Query
+        Code: Lambda_DB_Query.py
         Handler: Lambda_DB_Query.lambda_handler
         
 

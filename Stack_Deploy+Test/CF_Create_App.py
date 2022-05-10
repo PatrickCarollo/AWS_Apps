@@ -6,11 +6,11 @@ import random
 
 #Determine whether to begin new stack configuration/test or invoke a test for an existing stack app
 def User_Commands():
-    usercommand0 = input('Commands: new config, use config :')
-    if usercommand0 == 'use config':
+    usercommand0 = input('New Configuration?: y/n ')
+    if usercommand0 == 'n':
         data = input('Enter 4 digit existing test id: ')
         result = {'id0': data, 'comm': usercommand0}
-    elif usercommand0 == 'new config':
+    elif usercommand0 == 'y':
         data = json.dumps(random.randint(1000, 9999))
         result = {'id0': data, 'comm': usercommand0}
     else:
@@ -90,6 +90,10 @@ def Create_Event_Function(input_data, bucket_name):
         )
         if 'FunctionName' in response:
             print('Test event succesfully created:' + response['FunctionName'] +', continuing to stack create..')
+            data = True
+        else:
+            data = False
+        return data
     #API fail 
     except ClientError as e:
         print("Client error: %s" % e)
@@ -203,15 +207,19 @@ def Delete_Test(input_data):
 
 def main():
     a = User_Commands()
-    if a['comm'] == 'new config':
+    if a['comm'] == 'y':
         y = Launch_Source_Bucket(a)
         Upload_Test_Resources(a, y)
-        Create_Event_Function(a, y)
-        CF_Create(a)
+        c = Create_Event_Function(a, y)
+        if c == True:
+            v = CF_Create(a)
     else:
         pass
-    z = Lambda_Event_Invoke(a)
-    Cloudwatch_Log_Fetch(z)
-    Delete_Test(a)
+    if v == False:
+        print('Stack Create Failed')
+    else:
+        z = Lambda_Event_Invoke(a)
+        Cloudwatch_Log_Fetch(z)
+        Delete_Test(a)
 if __name__ == '__main__':
     main()
