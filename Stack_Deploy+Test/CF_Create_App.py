@@ -2,7 +2,7 @@ import boto3
 from botocore.exceptions import ClientError
 import json
 import random
-
+import base64
 
 #Determine whether to begin new stack configuration/test or invoke a test for an existing stack app
 def User_Commands():
@@ -48,6 +48,7 @@ def Upload_Test_Resources(input_data, bucket_name):
         items = object2.read() 
     with open('AWS_Apps/Stack_Deploy+Test/Test_Event.py') as object3:
         function = object3.read()         
+        encodedfunction = base64.b64encode(function)
     id0 = input_data['id0']
     try:
         response1 = s3client.put_object(
@@ -66,7 +67,7 @@ def Upload_Test_Resources(input_data, bucket_name):
             Key = 'Test_Event' + id0 + '.py'
         )
         if 'ETag' in response3:
-            print('Resources uploaded to bucket '+ bucket_name + id0)
+            print('Resources uploaded to bucket '+ bucket_name)
     #API fail
     except ClientError as e:
         print("Client error: %s" % e)
@@ -187,15 +188,12 @@ def Delete_Test(input_data):
                     }               
                 ]
             )
-    
             response1 = s3client.delete_bucket(
                 Bucket = 'event-resource' + id0 ,
             )
-
             response2 = lambdaclient.delete_function(
                 FunctionName= 'Lambda_Test_Event' + id0
             )
-
         except ClientError as e:
             print("Client error: %s" % e)
     elif cleanup == 'n':
