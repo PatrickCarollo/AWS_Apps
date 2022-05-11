@@ -47,8 +47,7 @@ def Upload_Test_Resources(input_data, bucket_name):
     with open('AWS_Apps/Stack_Deploy+Test/data.json') as object2:
         items = object2.read() 
     with open('AWS_Apps/Stack_Deploy+Test/Test_Event.py') as object3:
-        function = object3.read()         
-        encodedfunction = base64.b64encode(function)
+        data = object3.read()
     id0 = input_data['id0']
     try:
         response1 = s3client.put_object(
@@ -63,7 +62,7 @@ def Upload_Test_Resources(input_data, bucket_name):
         )
         response3 = s3client.put_object(
             Bucket = bucket_name,
-            Body = function,
+            Body = data,
             Key = 'Test_Event' + id0 + '.py'
         )
         if 'ETag' in response3:
