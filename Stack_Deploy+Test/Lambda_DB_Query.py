@@ -6,7 +6,6 @@ dynamodbclient = boto3.client('dynamodb')
 
 
 
-
 def lambda_handler(event, context):
     try:
         response0 = dynamodbclient.batch_write_item(
@@ -71,8 +70,7 @@ def upload_result(query_result):
  
             if 'ETag' in response2:
                 print('Uploaded query results to Dest_Bucket0101')
- 
-        #API fail
+         #API fail
         except ClientError as e:
             print("Client error: %s" % e)
 

@@ -2,7 +2,7 @@ import boto3
 from botocore.exceptions import ClientError
 import json
 import random
-import base64
+from zipfile import ZipFile
 
 #Determine whether to begin new stack configuration/test or invoke a test for an existing stack app
 def User_Commands():
@@ -46,8 +46,11 @@ def Upload_Test_Resources(input_data, bucket_name):
         template1 = object1.read()
     with open('AWS_Apps/Stack_Deploy+Test/data.json') as object2:
         items = object2.read() 
-    with open('AWS_Apps/Stack_Deploy+Test/Test_Event.py') as object3:
-        data = object3.read()
+    #with open('AWS_Apps/Stack_Deploy+Test/Test_Event.py') as object3:
+        #data = object3.read()
+    with ZipFile('Test_Event.zip', 'w') as z:
+        z.write('AWS_Apps/Stack_Deploy+Test/Test_Event.py')
+        #ZipFile.close()
     id0 = input_data['id0']
     try:
         response1 = s3client.put_object(
@@ -62,7 +65,7 @@ def Upload_Test_Resources(input_data, bucket_name):
         )
         response3 = s3client.put_object(
             Bucket = bucket_name,
-            Body = data,
+            Body = z,
             Key = 'Test_Event' + id0 + '.py'
         )
         if 'ETag' in response3:
@@ -196,7 +199,7 @@ def Delete_Test(input_data):
         except ClientError as e:
             print("Client error: %s" % e)
     elif cleanup == 'n':
-        print('Resource with id: '+ id0 + ' kept for future deployments')
+        print('Resource with id: '+ id0 + ' kept for future deployments/testing')
     else:
         print('Invalid deletion command')
         
