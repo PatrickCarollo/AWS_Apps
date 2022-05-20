@@ -46,10 +46,8 @@ def Upload_Test_Resources(input_data, bucket_name):
         template1 = object1.read()
     with open('AWS_Apps/Stack_Deploy+Test/data.json') as object2:
         items = object2.read() 
-    #with open('AWS_Apps/Stack_Deploy+Test/Test_Event.py') as object3:
-        #data = object3.read()
-    with ZipFile('Test_Event.zip', 'w') as z:
-        z.write('AWS_Apps/Stack_Deploy+Test/Test_Event.py')
+    with ZipFile('Test_Event.zip', 'w') as zipped_test_event:
+        zipped_test_event.write('AWS_Apps/Stack_Deploy+Test/Test_Event.py')
         #ZipFile.close()
     id0 = input_data['id0']
     try:
@@ -65,7 +63,7 @@ def Upload_Test_Resources(input_data, bucket_name):
         )
         response3 = s3client.put_object(
             Bucket = bucket_name,
-            Body = z,
+            Body = zipped_test_event,
             Key = 'Test_Event' + id0 + '.py'
         )
         if 'ETag' in response3:
@@ -108,11 +106,11 @@ cfclient = boto3.client('cloudformation')
 def CF_Create(input_data):
     id0 = input_data['id0']
     name = 'Main_Stack'+ id0
-    templatelocation = 'https://event-resource{}.s3.amazonaws.com/Template{}.yaml'.format(id0, id0)
+    template_location = 'https://event-resource{}.s3.amazonaws.com/Template{}.yaml'.format(id0, id0)
     try:
         response = cfclient.create_stack(
             StackName = name,
-            TemplateURL = templatelocation,
+            TemplateURL = template_location,
         )
         if 'StackId' in response:
             data = response['StackId']

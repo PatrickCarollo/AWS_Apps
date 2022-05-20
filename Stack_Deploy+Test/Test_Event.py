@@ -33,7 +33,7 @@ def lambda_handler(event, context):
 #invoking the stack created function to begin the launched app
 def app_invoke(x):
     response2 = lambdaclient.invoke(
-        FunctionName = name , 
+        FunctionName = name ,
         Payload = jsonitem)
     return response2['StatusCode']
 
