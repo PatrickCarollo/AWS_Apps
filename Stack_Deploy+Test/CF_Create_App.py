@@ -103,26 +103,28 @@ def Create_Event_Function(input_data, bucket_name):
 
 #Launch stack with template fetched from test id bucket/MIGht CHANGE THIS TO RUN UPON NEW TEST
 cfclient = boto3.client('cloudformation')
-def CF_Create(input_data):
-    id0 = input_data['id0']
-    name = 'Main_Stack'+ id0
-    template_location = 'https://event-resource{}.s3.amazonaws.com/Template{}.yaml'.format(id0, id0)
-    try:
-        response = cfclient.create_stack(
-            StackName = name,
-            TemplateURL = template_location,
-        )
-        if 'StackId' in response:
-            data = response['StackId']
-            print('Stack created')
-        else:
-            data = False
-        return data
-    #API fail
-    except ClientError as e:
-        print("Client error: %s" % e)
+def CF_Create(input_data, test_func):
+    if test_func == True:
+        id0 = input_data['id0']
+        name = 'Main_Stack'+ id0
+        template_location = 'https://event-resource{}.s3.amazonaws.com/Template{}.yaml'.format(id0, id0)
+        try:
+            response = cfclient.create_stack(
+                StackName = name,
+                TemplateURL = template_location,
+            )
+            if 'StackId' in response:
+                data = response['StackId']
+                print('Stack created')
+            else:
+                data = False
+            return data
+        #API fail
+        except ClientError as e:
+            print("Client error: %s" % e)
 
-
+    else:
+        print('Error: No test event found.')
 
 #Starts the test that invokes deployed stack infrastructure, returns stack-launched function name
 def Lambda_Event_Invoke(input_data):
@@ -209,13 +211,9 @@ def main():
         y = Launch_Source_Bucket(a)
         Upload_Test_Resources(a, y)
         c = Create_Event_Function(a, y)
-        if c == True:
-            v = CF_Create(a)
+        v = CF_Create(a, c)
     else:
         pass
-    if v == False:
-        print('Stack Create Failed')
-    else:
         z = Lambda_Event_Invoke(a)
         Cloudwatch_Log_Fetch(z)
         Delete_Test(a)
